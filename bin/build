@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-set -v
-exec &> >(tee -a /root/build.log)
+exec &> >(tee -a /build.log)
 
 installPath="/opt/bin"
 
@@ -19,6 +18,8 @@ install_cmd() {
   eval "$@"
   chmod_ln "${cmd}"
 }
+
+set -v
 
 cmd=jq ; echo "Installing \`${cmd}\`..."
 url="https://github.com/stedolan/jq/releases/latest/download/jq-linux64"
@@ -66,7 +67,7 @@ v=$(curl -s https://github.com/cloudfoundry/credhub-cli/releases/latest | awk -F
 url="https://github.com/cloudfoundry/credhub-cli/releases/download/${v}/credhub-linux-${v}.tgz"
 curl -sL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
-cmd="${vault}"; echo "Installing \`${cmd}\`..."
+cmd=vault; echo "Installing \`${cmd}\`..."
 v=$(curl -s https://github.com/hashicorp/vault/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}' | tr -d 'v')
 file="vault_${v}_linux_amd64.zip"
 url="https://releases.hashicorp.com/vault/${v}/${file}"

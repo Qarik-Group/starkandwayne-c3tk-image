@@ -1,5 +1,7 @@
 # syntax=docker/dockerfile:1
 
+FROM ruby:2.7-bullseye AS ruby
+
 FROM ubuntu:latest
 
 RUN apt-get update \
@@ -12,6 +14,8 @@ RUN apt-get update \
   && echo hosts: files dns > /etc/nsswitch.conf
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tshark 
+
+COPY --from=ruby /usr/local /usr/local
 
 WORKDIR /root
 
