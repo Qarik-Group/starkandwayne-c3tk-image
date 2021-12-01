@@ -32,6 +32,12 @@ curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 cmd=xq ; echo "Installing \`${cmd}\`..."
 pip3 install ${cmd} && mv /usr/local/bin/${cmd} "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
+cmd=go ;  echo "Installing \`${cmd}\`..." ; v=1.17.3
+curl -sOL https://go.dev/dl/go${v}.linux-amd64.tar.gz && rm -rf /usr/local/go && 
+  tar -C /usr/local -xzf go${v}.linux-amd64.tar.gz && rm go${v}.linux-amd64.tar.gz 
+ln -s /usr/local/go/bin/go /usr/local/bin/go
+ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+
 cmd=safe ; echo "Installing \`${cmd}\`..."
 url="https://github.com/starkandwayne/safe/releases/latest/download/safe-linux-amd64"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
@@ -45,7 +51,7 @@ url="https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v7&
 curl -sL "${url}" | tar -zx 
 mv "${cmd}" "${installPath}/${cmd}" && chmod_ln "${cmd}"
 cmd=cf ; echo "Installing \`${cmd}\`..."
-mv "${cmd}" "${installPath}/${cmd}" && chmod_ln "${cmd}"
+mv "${cmd}" "${installPath}/${cmd}"
 
 cmd=bosh ; echo "Installing \`${cmd}\`..."
 v=$(curl -s https://github.com/cloudfoundry/bosh-cli/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
@@ -75,20 +81,27 @@ curl -sLO "${url}" && unzip "${file}" && mv "${cmd}" "${installPath}/${cmd}" &&
   chmod_ln "${cmd}"
 rm -f "${file}"
 
-cmd=genesis ; echo "Installing \`${cmd}\`..."
-url="https://github.com/genesis-community/genesis/releases/latest/download/genesis"
-curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
-
-cmd=kubectl ; echo "Installing \`${cmd}\`..."
-v=$(curl -s https://github.com/kubernetes/kubernetes/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
-url="https://storage.googleapis.com/kubernetes-release/release/${v}/bin/linux/amd64/kubectl"
-curl -fsSL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
-
 cmd=fly ; echo "Installing \`${cmd}\`..."
 v=$(curl -s https://github.com/concourse/concourse/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
 url="https://github.com/concourse/concourse/releases/download/${v}/fly-${v/v/}-linux-amd64.tgz"
 curl -fsSL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}"
 # NOTE: for `fly` we use a wrapper script in /usr/local/bin/
+
+cmd=genesis ; echo "Installing \`${cmd}\`..."
+#v=$(curl -s https://github.com/genesis-community/genesis/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+#url="https://github.com/genesis-community/genesis/releases/download/${v}/genesis"
+url="https://github.com/genesis-community/genesis/releases/download/v2.8.3-rc.4/genesis"
+curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
+#git clone https://github.com/genesis-community/genesis.git && cd genesis
+#_rev=$(git rev-parse --short=10 HEAD)
+#make dev-release
+#mv ./genesis-dev-${_rev} ${installPath}/${cmd} && chmod_ln ${cmd}
+#cd ../ && rm -rf ./genesis/
+
+cmd=kubectl ; echo "Installing \`${cmd}\`..."
+v=$(curl -s https://github.com/kubernetes/kubernetes/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+url="https://storage.googleapis.com/kubernetes-release/release/${v}/bin/linux/amd64/kubectl"
+curl -fsSL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=k9s ; echo "Installing \`${cmd}\`..."
 url="https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_x86_64.tar.gz"

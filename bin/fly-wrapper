@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[[ -z "${DEBUG}" ]] || set -x
+
 target="$(echo "$@" | sed -e 's/.*-t //' -e 's/ .*$//')"
 if [[ -n "${target}" ]]
 then 

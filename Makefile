@@ -10,3 +10,6 @@ build:
 push:
 	docker push starkandwayne/c3tk:latest
 
+shell:
+	docker run -it --rm --platform linux/amd64 -t starkandwayne/c3tk:latest
+

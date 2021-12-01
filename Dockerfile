@@ -6,8 +6,8 @@ FROM ubuntu:latest
 
 RUN apt-get update \
 	&& ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime \
-	&& apt-get install -y --no-install-recommends \
-	libssl-dev bash curl ca-certificates wget make tar git make less \
+	&& apt-get install -y --no-install-recommends  build-essential \
+	libssl-dev bash curl ca-certificates wget tar git less file \
 	openssh-client procps dnsutils whois netcat tcpdump tcptrace sipcalc \
 	perl tig tmux tree pwgen unzip nmap gpg tzdata xz-utils python3 python3-pip \
 	&& dpkg-reconfigure --frontend noninteractive tzdata \
@@ -17,12 +17,14 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tshark
 
 COPY --from=ruby /usr/local /usr/local
 
-WORKDIR /root
-
 ADD ./bin/fly-wrapper /usr/local/bin/fly
+ADD ./bin/cf-wrapper /usr/local/bin/cf
+ADD ./bin/yamler /usr/local/bin/fly
 
-ADD ./bin/build /root/build
-RUN /root/build
+WORKDIR /build
+
+ADD ./bin/build /build/build
+
+RUN /build/build
 
 CMD /bin/bash
-

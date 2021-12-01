@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+[[ -z "${DEBUG}" ]] || set -x
+
+# https://plugins.cloudfoundry.org/
+plugins=(
+  Targets
+  app-autoscaler-plugin
+  app-metrics
+  bg-restage
+  cf-download
+  cf-rolling-restart
+  conduit
+  copyenv
+  docker-usage
+  fastpush
+  java
+  metric-registrar
+  mysql-plugin
+  push-with-vault
+  route-lookup
+  started-apps
+  sync
+  top
+  wildcard_plugin
+  "Download Droplet"
+)
+# doctor ?
+# open ? 
+[[ -s ~/.cf/plugins/config.json ]] || 
+  { mkdir -p ~/.cf/plugins && echo '{}' > ~/.cf/plugins/config.json}
+installed=()
+while read -r name
+do installed+=(name)
+done <<< $(cat ~/.cf/plugins/config.json | jq -r '.Plugins[].Name')
+
+for plugin in "${plugins[@]}"
+do 
+  IFS="|"
+  [[ "${IFS}${installed[*]}${IFS}" =~ "${IFS}${plugin}${IFS}" ]] ||
+    { 
+      echo -e "Installing Plugin ${plugin}..."
+      cf install-plugin -r CF-Community "${plugin}" & 
+    }
+  unset IFS # or set back to original IFS if previously set
+done
+wait
+
+exec /opt/bin/cf "${@}"
+
+exit 0

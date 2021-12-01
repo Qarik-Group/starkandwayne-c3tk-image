@@ -1,2 +1,3 @@
 # c3tk
-c3tk resource for docker image and configs
+
+c3tk resources for building and publishing the starkandwayne/c3tk docker image
