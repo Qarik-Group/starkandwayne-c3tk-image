@@ -90,7 +90,7 @@ curl -fsSL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}"
 cmd=genesis ; echo "Installing \`${cmd}\`..."
 #v=$(curl -s https://github.com/genesis-community/genesis/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
 #url="https://github.com/genesis-community/genesis/releases/download/${v}/genesis"
-url="https://github.com/genesis-community/genesis/releases/download/v2.8.3-rc.4/genesis"
+url="https://github.com/genesis-community/genesis/releases/download/v2.8.3-rc.6/genesis"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 #git clone https://github.com/genesis-community/genesis.git && cd genesis
 #_rev=$(git rev-parse --short=10 HEAD)
@@ -106,5 +106,13 @@ curl -fsSL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 cmd=k9s ; echo "Installing \`${cmd}\`..."
 url="https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_x86_64.tar.gz"
 curl -sL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}" && chmod_ln "${cmd}"
+
+cmd=go ; echo "Installing \`${cmd}\`..."
+v="1.17.5"
+url="https://go.dev/dl/go${v}.linux-amd64.tar.gz"
+curl -sLO "${url}" && tar -zxf $(basename $url) && mv ./go /usr/local/ &&
+  ln -s /usr/local/go/go "${installPath}/${cmd}" &&
+  ln -s /usr/local/go/gofmt "${installPath}/gofmt" 
+rm -f $(basename $url)
 
 exit 0
