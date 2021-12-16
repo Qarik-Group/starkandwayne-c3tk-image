@@ -9,7 +9,7 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends  build-essential \
 	libssl-dev bash curl ca-certificates wget tar git less file \
 	openssh-client procps dnsutils whois netcat tcpdump tcptrace sipcalc \
-	perl tig tmux tree pwgen unzip nmap gpg tzdata xz-utils python3 python3-pip \
+	perl tig tmux tree pwgen unzip nmap gnupg2 tzdata xz-utils python3 python3-pip \
 	&& dpkg-reconfigure --frontend noninteractive tzdata \
   && echo hosts: files dns > /etc/nsswitch.conf
 
