@@ -2,6 +2,8 @@
 
 FROM ruby:2.7-bullseye AS ruby
 
+FROM starkandwayne/carousel-concourse AS carousel
+
 FROM ubuntu:latest
 
 RUN apt-get update \
@@ -16,6 +18,7 @@ RUN apt-get update \
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tshark 
 
 COPY --from=ruby /usr/local /usr/local
+COPY --from=carousel /bin/carousel /bin/carousel
 
 ADD ./bin/fly-wrapper /usr/local/bin/fly
 ADD ./bin/cf-wrapper /usr/local/bin/cf
