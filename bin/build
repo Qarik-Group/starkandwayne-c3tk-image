@@ -88,9 +88,8 @@ curl -fsSL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}"
 # NOTE: for `fly` we use a wrapper script in /usr/local/bin/
 
 cmd=genesis ; echo "Installing \`${cmd}\`..."
-#v=$(curl -s https://github.com/genesis-community/genesis/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
-#url="https://github.com/genesis-community/genesis/releases/download/${v}/genesis"
-url="https://github.com/genesis-community/genesis/releases/download/v2.8.3-rc.6/genesis"
+v=$(curl -s https://github.com/genesis-community/genesis/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+url="https://github.com/genesis-community/genesis/releases/download/${v}/genesis"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 #git clone https://github.com/genesis-community/genesis.git && cd genesis
 #_rev=$(git rev-parse --short=10 HEAD)
