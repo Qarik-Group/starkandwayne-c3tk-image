@@ -27,24 +27,28 @@ plugins=(
 )
 # doctor ?
 # open ? 
-[[ -s ~/.cf/plugins/config.json ]] || 
-  { mkdir -p ~/.cf/plugins && echo '{}' > ~/.cf/plugins/config.json; }
+set -x
+if ! [[ -s ~/.cf/plugins/config.json ]]
+then
+  mkdir -p ~/.cf/plugins 
+  echo '{}' > ~/.cf/plugins/config.json
+fi
+
 installed=()
 while read -r name
-do installed+=(name)
+do installed+=(${name})
 done <<< $(cat ~/.cf/plugins/config.json | jq -r '.Plugins[].Name')
 
 for plugin in "${plugins[@]}"
 do 
   IFS="|"
-  [[ "${IFS}${installed[*]}${IFS}" =~ "${IFS}${plugin}${IFS}" ]] ||
-    { 
-      echo -e "Installing Plugin ${plugin}..."
-      cf install-plugin -r CF-Community "${plugin}" & 
-    }
+  if ! [[ "${IFS}${installed[*]}${IFS}" =~ "${IFS}${plugin}${IFS}" ]]
+  then
+    echo -e "Installing Plugin ${plugin}..."
+    cf install-plugin -r CF-Community "${plugin}"
+  fi
   unset IFS # or set back to original IFS if previously set
 done
-wait
 
 exec /opt/bin/cf "${@}"
 
