@@ -37,7 +37,7 @@ fi
 installed=()
 while read -r name
 do installed+=(${name})
-done <<< $(cat ~/.cf/plugins/config.json | jq -r '.Plugins[].Name')
+done <<< $(cat ~/.cf/plugins/config.json | jq -r '.Plugins[]?.Name')
 
 for plugin in "${plugins[@]}"
 do 
