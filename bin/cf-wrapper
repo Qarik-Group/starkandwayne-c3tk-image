@@ -49,7 +49,6 @@ do
       echo "y" | /opt/bin/cf install-plugin -r CF-Community "${plugin}"
     }
 done
-wait
 
 exec /opt/bin/cf "${@}"
 
