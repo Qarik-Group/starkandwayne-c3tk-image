@@ -29,8 +29,6 @@ declare -A plugins=(
 )
 # doctor ?
 # open ?
-# [[ -s ~/.cf/plugins/config.json ]] ||
-#   { mkdir -p ~/.cf/plugins && echo '{}' > ~/.cf/plugins/config.json; }
 
 installed=""
 
