@@ -3,52 +3,55 @@
 [[ -z "${DEBUG}" ]] || set -x
 
 # https://plugins.cloudfoundry.org/
-plugins=(
-  Targets
-  app-autoscaler-plugin
-  app-metrics
-  bg-restage
-  cf-download
-  cf-rolling-restart
-  conduit
-  copyenv
-  docker-usage
-  fastpush
-  java
-  metric-registrar
-  mysql-plugin
-  push-with-vault
-  route-lookup
-  started-apps
-  sync
-  top
-  wildcard_plugin
-  "Download Droplet"
+# key is the external name and value is the internal name
+# the internal name is what is used in the ~/.cf/plugins/config.json file
+declare -A plugins=(
+  ['Targets']='cf-targets'
+  ['app-autoscaler-plugin']='AutoScaler'
+  ['app-metrics']='app-metrics'
+  ['bg-restage']='bg-restage'
+  ['cf-download']='cf-download'
+  ['cf-rolling-restart']='cf-rolling-restart'
+  ['conduit']='conduit'
+  ['copyenv']='copyenv'
+  ['docker-usage']='docker-usage'
+  ['fastpush']='FastPushPlugin'
+  ['java']='java'
+  ['metric-registrar']='metric-registrar'
+  ['mysql-plugin']='mysql'
+  ['push-with-vault']='push-with-vault'
+  ['route-lookup']='route-lookup'
+  ['started-apps']='started-apps'
+  ['sync']='sync'
+  ['top']='top'
+  ['wildcard_plugin']='wildcard'
+  ['Download Droplet']='Download Droplet'
 )
 # doctor ?
-# open ? 
-set -x
-if ! [[ -s ~/.cf/plugins/config.json ]]
-then
-  mkdir -p ~/.cf/plugins 
-  echo '{}' > ~/.cf/plugins/config.json
-fi
+# open ?
+# [[ -s ~/.cf/plugins/config.json ]] ||
+#   { mkdir -p ~/.cf/plugins && echo '{}' > ~/.cf/plugins/config.json; }
 
-installed=()
-while read -r name
-do installed+=(${name})
-done <<< $(cat ~/.cf/plugins/config.json | jq -r '.Plugins[].Name')
+installed=""
 
-for plugin in "${plugins[@]}"
-do 
-  IFS="|"
-  if ! [[ "${IFS}${installed[*]}${IFS}" =~ "${IFS}${plugin}${IFS}" ]]
-  then
-    echo -e "Installing Plugin ${plugin}..."
-    cf install-plugin -r CF-Community "${plugin}"
-  fi
-  unset IFS # or set back to original IFS if previously set
+[[ -s ~/.cf/plugins/config.json ]] && {
+  while read -r name; do
+    [[ -n "${name}" ]] && installed+=",${name}"
+  done <<< $(cat ~/.cf/plugins/config.json | jq -r '.Plugins[]?.Name')
+}
+
+[[ -z "${installed}" ]] && installed=","
+[[ -n "${installed}" ]] && installed="${installed},"
+
+for plugin in "${!plugins[@]}"
+do
+  internal="${plugins[$plugin]}"
+  [[ "${installed}" =~ ",${internal}," ]] || {
+      echo -e "Installing Plugin ${plugin}..."
+      echo "y" | /opt/bin/cf install-plugin -r CF-Community "${plugin}"
+    }
 done
+wait
 
 exec /opt/bin/cf "${@}"
 
