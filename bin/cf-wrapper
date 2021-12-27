@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+((BASH_VERSINFO[0] < 4)) || ((BASH_VERSINFO[0] == 4 & BASH_VERSINFO[1] < 3)) && {
+  echo "The bash scrip is designed to use bash 4.3 or greater ($BASH_VERSION)"
+  exit 1
+}
 
 [[ -z "${DEBUG}" ]] || set -x
 
