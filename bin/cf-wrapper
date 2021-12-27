@@ -29,7 +29,6 @@ declare -A plugins=(
   ['sync']='sync'
   ['top']='top'
   ['wildcard_plugin']='wildcard'
-  ['Download Droplet']='Download Droplet'
 )
 # doctor ?
 # open ?
