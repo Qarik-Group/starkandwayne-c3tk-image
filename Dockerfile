@@ -22,7 +22,7 @@ COPY --from=carousel /bin/carousel /bin/carousel
 
 ADD ./bin/fly-wrapper /usr/local/bin/fly
 ADD ./bin/cf-wrapper /usr/local/bin/cf
-ADD ./bin/yamler /usr/local/bin/fly
+ADD ./bin/yamler /usr/local/bin/yamler
 
 WORKDIR /build
 
