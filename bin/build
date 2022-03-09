@@ -82,9 +82,11 @@ curl -sLO "${url}" && unzip "${file}" && mv "${cmd}" "${installPath}/${cmd}" &&
 rm -f "${file}"
 
 cmd=fly ; echo "Installing \`${cmd}\`..."
-v=$(curl -s https://github.com/concourse/concourse/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
-url="https://github.com/concourse/concourse/releases/download/${v}/fly-${v/v/}-linux-amd64.tgz"
-curl -fsSL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}"
+#v=$(curl -s https://github.com/concourse/concourse/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+#url="https://github.com/concourse/concourse/releases/download/${v}/fly-${v/v/}-linux-amd64.tgz"
+v=7.6.0
+url=https://github.com/concourse/concourse/releases/download/v7.6.0/fly-7.6.0-linux-amd64.tgz
+curl -sL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}" && chmod_ln "${cmd}"
 # NOTE: for `fly` we use a wrapper script in /usr/local/bin/
 
 cmd=genesis ; echo "Installing \`${cmd}\`..."
