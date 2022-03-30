@@ -12,7 +12,7 @@ RUN apt-get update \
 	libssl-dev bash curl ca-certificates wget tar git less file \
 	openssh-client procps dnsutils whois netcat tcpdump tcptrace sipcalc \
 	perl tig tmux tree pwgen unzip nmap gnupg2 tzdata xz-utils python3 python3-pip \
-	zlib1g-dev libtool libyaml-dev \
+	zlib1g-dev libtool libyaml-dev htop \
 	&& dpkg-reconfigure --frontend noninteractive tzdata \
   && echo hosts: files dns > /etc/nsswitch.conf
 
