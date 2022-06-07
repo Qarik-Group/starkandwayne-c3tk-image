@@ -19,7 +19,7 @@ install_cmd() {
   chmod_ln "${cmd}"
 }
 
-set -v
+set -vx
 
 cmd=jq ; echo "Installing \`${cmd}\`..."
 url="https://github.com/stedolan/jq/releases/latest/download/jq-linux64"
@@ -54,14 +54,14 @@ cmd=cf ; echo "Installing \`${cmd}\`..."
 mv "${cmd}" "${installPath}/${cmd}"
 
 cmd=bosh ; echo "Installing \`${cmd}\`..."
-v=$(curl -s https://github.com/cloudfoundry/bosh-cli/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
-url="https://github.com/cloudfoundry/bosh-cli/releases/download/${v}/bosh-cli-${v/v/}-linux-amd64"
+v="7.0.1" # $(curl -s https://github.com/cloudfoundry/bosh-cli/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+url="https://github.com/cloudfoundry/bosh-cli/releases/download/v${v}/bosh-cli-${v}-linux-amd64"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=boss ; echo "Installing \`${cmd}\`..."
 https://github.com/releases/latest
-v=$(curl -s https://github.com/blacksmith-community/boss/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
-url="https://github.com/blacksmith-community/boss/releases/download/${v}/boss-linux-amd64"
+v="0.0.6" # $(curl -s https://github.com/blacksmith-community/boss/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+url="https://github.com/blacksmith-community/boss/releases/download/v${v}/boss-linux-amd64"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=cc-me ; echo "Installing \`${cmd}\`..."
@@ -69,12 +69,12 @@ url="https://raw.githubusercontent.com/jhunt/cc-me/master/cc-me"
  curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=credhub ; echo "Installing \`${cmd}\`..."
-v=$(curl -s https://github.com/cloudfoundry/credhub-cli/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+v="2.9.3" #$(curl -s https://github.com/cloudfoundry/credhub-cli/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
 url="https://github.com/cloudfoundry/credhub-cli/releases/download/${v}/credhub-linux-${v}.tgz"
 curl -sL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=vault; echo "Installing \`${cmd}\`..."
-v=$(curl -s https://github.com/hashicorp/vault/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}' | tr -d 'v')
+v="1.10.3" # $(curl -s https://github.com/hashicorp/vault/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}' | tr -d 'v')
 file="vault_${v}_linux_amd64.zip"
 url="https://releases.hashicorp.com/vault/${v}/${file}"
 curl -sLO "${url}" && unzip "${file}" && mv "${cmd}" "${installPath}/${cmd}" &&
@@ -84,14 +84,14 @@ rm -f "${file}"
 cmd=fly ; echo "Installing \`${cmd}\`..."
 #v=$(curl -s https://github.com/concourse/concourse/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
 #url="https://github.com/concourse/concourse/releases/download/${v}/fly-${v/v/}-linux-amd64.tgz"
-v=7.6.0
-url=https://github.com/concourse/concourse/releases/download/v7.6.0/fly-7.6.0-linux-amd64.tgz
+v="7.8.0"
+url=https://github.com/concourse/concourse/releases/download/v${v}/fly-${v}-linux-amd64.tgz
 curl -sL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}" && chmod_ln "${cmd}"
 # NOTE: for `fly` we use a wrapper script in /usr/local/bin/
 
 cmd=genesis ; echo "Installing \`${cmd}\`..."
-v=$(curl -s https://github.com/genesis-community/genesis/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
-url="https://github.com/genesis-community/genesis/releases/download/${v}/genesis"
+v="2.8.5" #$(curl -s https://github.com/genesis-community/genesis/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+url="https://github.com/genesis-community/genesis/releases/download/v${v}/genesis"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 #git clone https://github.com/genesis-community/genesis.git && cd genesis
 #_rev=$(git rev-parse --short=10 HEAD)
@@ -100,8 +100,8 @@ curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 #cd ../ && rm -rf ./genesis/
 
 cmd=kubectl ; echo "Installing \`${cmd}\`..."
-v=$(curl -s https://github.com/kubernetes/kubernetes/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
-url="https://storage.googleapis.com/kubernetes-release/release/${v}/bin/linux/amd64/kubectl"
+v="1.24.1" # $(curl -s https://github.com/kubernetes/kubernetes/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+url="https://storage.googleapis.com/kubernetes-release/release/v${v}/bin/linux/amd64/kubectl"
 curl -fsSL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=k9s ; echo "Installing \`${cmd}\`..."
