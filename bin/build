@@ -21,6 +21,23 @@ install_cmd() {
 
 set -vx
 
+# TODO: enable locking specific versions vs 'latest'
+bosh_version="7.0.1"
+boss_version="0.0.6"
+cf7_version="latest" # TODO: cf7, cf8, cf -> cf7
+credhub_version="2.9.3"
+fly_version="7.8.0"
+genesis_version="2.8.5"
+go_version="1.18.3"
+jq_version="latest"
+k9s_version="latest"
+kubectl_version="1.24.1"
+safe_version="latest"
+spruce_version="latest"
+vault_version="1.10.3"
+xq_version="latest"
+yq_version="latest"
+
 cmd=jq ; echo "Installing \`${cmd}\`..."
 url="https://github.com/stedolan/jq/releases/latest/download/jq-linux64"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
@@ -32,13 +49,8 @@ curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 cmd=xq ; echo "Installing \`${cmd}\`..."
 pip3 install ${cmd} && mv /usr/local/bin/${cmd} "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
-cmd=go ;  echo "Installing \`${cmd}\`..." ; v=1.17.3
-curl -sOL https://go.dev/dl/go${v}.linux-amd64.tar.gz && rm -rf /usr/local/go && 
-  tar -C /usr/local -xzf go${v}.linux-amd64.tar.gz && rm go${v}.linux-amd64.tar.gz 
-ln -s /usr/local/go/bin/go /usr/local/bin/go
-ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
-
 cmd=safe ; echo "Installing \`${cmd}\`..."
+# v=${safe_version}
 url="https://github.com/starkandwayne/safe/releases/latest/download/safe-linux-amd64"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
@@ -54,13 +66,13 @@ cmd=cf ; echo "Installing \`${cmd}\`..."
 mv "${cmd}" "${installPath}/${cmd}"
 
 cmd=bosh ; echo "Installing \`${cmd}\`..."
-v="7.0.1" # $(curl -s https://github.com/cloudfoundry/bosh-cli/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+v="${bosh_version}" # $(curl -s https://github.com/cloudfoundry/bosh-cli/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
 url="https://github.com/cloudfoundry/bosh-cli/releases/download/v${v}/bosh-cli-${v}-linux-amd64"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=boss ; echo "Installing \`${cmd}\`..."
 https://github.com/releases/latest
-v="0.0.6" # $(curl -s https://github.com/blacksmith-community/boss/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+v="${boss_version}" # $(curl -s https://github.com/blacksmith-community/boss/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
 url="https://github.com/blacksmith-community/boss/releases/download/v${v}/boss-linux-amd64"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
@@ -69,12 +81,12 @@ url="https://raw.githubusercontent.com/jhunt/cc-me/master/cc-me"
  curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=credhub ; echo "Installing \`${cmd}\`..."
-v="2.9.3" #$(curl -s https://github.com/cloudfoundry/credhub-cli/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+v="${credhub_version}" #$(curl -s https://github.com/cloudfoundry/credhub-cli/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
 url="https://github.com/cloudfoundry/credhub-cli/releases/download/${v}/credhub-linux-${v}.tgz"
 curl -sL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=vault; echo "Installing \`${cmd}\`..."
-v="1.10.3" # $(curl -s https://github.com/hashicorp/vault/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}' | tr -d 'v')
+v="${vault_version}" # $(curl -s https://github.com/hashicorp/vault/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}' | tr -d 'v')
 file="vault_${v}_linux_amd64.zip"
 url="https://releases.hashicorp.com/vault/${v}/${file}"
 curl -sLO "${url}" && unzip "${file}" && mv "${cmd}" "${installPath}/${cmd}" &&
@@ -84,13 +96,13 @@ rm -f "${file}"
 cmd=fly ; echo "Installing \`${cmd}\`..."
 #v=$(curl -s https://github.com/concourse/concourse/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
 #url="https://github.com/concourse/concourse/releases/download/${v}/fly-${v/v/}-linux-amd64.tgz"
-v="7.8.0"
+v="${fly_version}"
 url=https://github.com/concourse/concourse/releases/download/v${v}/fly-${v}-linux-amd64.tgz
 curl -sL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}" && chmod_ln "${cmd}"
 # NOTE: for `fly` we use a wrapper script in /usr/local/bin/
 
 cmd=genesis ; echo "Installing \`${cmd}\`..."
-v="2.8.5" #$(curl -s https://github.com/genesis-community/genesis/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+v="${genesis_version}" #$(curl -s https://github.com/genesis-community/genesis/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
 url="https://github.com/genesis-community/genesis/releases/download/v${v}/genesis"
 curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 #git clone https://github.com/genesis-community/genesis.git && cd genesis
@@ -100,20 +112,24 @@ curl -sL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 #cd ../ && rm -rf ./genesis/
 
 cmd=kubectl ; echo "Installing \`${cmd}\`..."
-v="1.24.1" # $(curl -s https://github.com/kubernetes/kubernetes/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
+v="${kubectl_version}" # $(curl -s https://github.com/kubernetes/kubernetes/releases/latest | awk -F\" '{print $2}' | awk -F/ '{print $NF}')
 url="https://storage.googleapis.com/kubernetes-release/release/v${v}/bin/linux/amd64/kubectl"
 curl -fsSL "${url}" -o "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=k9s ; echo "Installing \`${cmd}\`..."
+# v="${k9s_version}"
 url="https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_x86_64.tar.gz"
 curl -sL "${url}" | tar -zx && mv "${cmd}" "${installPath}/${cmd}" && chmod_ln "${cmd}"
 
 cmd=go ; echo "Installing \`${cmd}\`..."
-v="1.17.5"
+v="${go_version}"
 url="https://go.dev/dl/go${v}.linux-amd64.tar.gz"
-curl -sLO "${url}" && tar -zxf $(basename $url) && mv ./go /usr/local/ &&
-  ln -s /usr/local/go/go "${installPath}/${cmd}" &&
-  ln -s /usr/local/go/gofmt "${installPath}/gofmt" 
+
+curl -sLO "${url}" && 
+  tar -C /usr/local -xzf go${v}.linux-amd64.tar.gz && 
+  ln -s /usr/local/go/bin/go /usr/local/bin/go &&
+  ln -s /usr/local/go/bin/gofmt /usr/local/bin/gofmt
+
 rm -f $(basename $url)
 
 exit 0
